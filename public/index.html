@@ -1,4 +1,47 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#111111"><title>NinjaBox Viewer</title><style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:18px;background:#111;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center}.card{width:100%;max-width:460px;padding:24px;border:1px solid #333;border-radius:18px;background:#1b1b1b}h1{text-align:center;font-size:27px}.desc{color:#bbb;line-height:1.5;text-align:center}label{display:block;margin:18px 0 8px;font-weight:bold}input,textarea{width:100%;padding:14px;border:1px solid #555;border-radius:10px;background:#101010;color:white;font-size:16px}textarea{resize:vertical;min-height:90px}button,.live{display:block;width:100%;margin-top:13px;padding:14px;border:0;border-radius:10px;background:#00e5ff;color:#111;font-size:15px;font-weight:bold;text-align:center;text-decoration:none;cursor:pointer}.live{background:#333;color:white}button:disabled{opacity:.55}#status{color:#00e5ff;line-height:1.5;overflow-wrap:anywhere;min-height:24px}.note{margin-top:18px;color:#999;font-size:12px;line-height:1.6}</style></head><body><main class="card"><h1>🥷 NinjaBox Viewer</h1><p class="desc">Hedef yayın: <strong>@ninjaboxx</strong><br>İkinci hesabınla bir defalık yorum testi.</p><a class="live" href="https://www.tiktok.com/@ninjaboxx/live" target="_blank" rel="noopener noreferrer">📺 CANLI YAYINI AÇ</a><label for="controlPassword">Kontrol şifresi</label><input id="controlPassword" type="password" autocomplete="current-password" placeholder="Railway VIEWER_CONTROL_PASSWORD"><label for="message">Gönderilecek yorum</label><textarea id="message" maxlength="150">Merhaba NinjaBox, bağlantı testi.</textarea><button id="send">YORUMU GÖNDER</button><p id="status" role="status">Önce Railway Variables ayarlarını tamamla.</p><p class="note">Yorum yalnızca düğmeye basıldığında gönderilir; otomatik tekrar/spam yoktur. Bu TikTok resmî olmayan bağlantısıdır ve kesintisiz çalışması garanti değildir. Oturum bilgileri tarayıcıya aktarılmaz; yalnızca sunucu ortam değişkenlerinde tutulmalıdır. Bu sürüm otomatik beğeni veya hediye göndermez.</p></main><script>
-const statusEl=document.getElementById("status"),sendBtn=document.getElementById("send");sendBtn.addEventListener("click",async()=>{const password=document.getElementById("controlPassword").value,message=document.getElementById("message").value.trim();if(!password){statusEl.textContent="Kontrol şifresini gir.";return}if(!message){statusEl.textContent="Gönderilecek yorum boş olamaz.";return}sendBtn.disabled=true;statusEl.textContent="Bağlanıyor ve yorum gönderiliyor...";try{const response=await fetch("/api/send-message",{method:"POST",headers:{"Content-Type":"application/json","x-control-password":password},body:JSON.stringify({message})});const data=await response.json();statusEl.textContent=data.ok?"✅ "+data.message:"⚠️ "+(data.error||"İşlem başarısız.")}catch{statusEl.textContent="Sunucuya ulaşılamadı. Railway dağıtımını kontrol et."}finally{sendBtn.disabled=false}});
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111111"><title>NinjaBox Viewer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:18px;background:#111;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center}
+.card{width:100%;max-width:460px;padding:24px;border:1px solid #333;border-radius:18px;background:#1b1b1b}
+h1{text-align:center;font-size:27px}.desc{color:#bbb;line-height:1.5;text-align:center}
+label{display:block;margin:18px 0 8px;font-weight:bold}input,textarea{width:100%;padding:14px;border:1px solid #555;border-radius:10px;background:#101010;color:white;font-size:16px}
+textarea{resize:vertical;min-height:90px}button,.live{display:block;width:100%;margin-top:13px;padding:14px;border:0;border-radius:10px;background:#00e5ff;color:#111;font-size:15px;font-weight:bold;text-align:center;text-decoration:none;cursor:pointer}
+.live{background:#333;color:white}button:disabled{opacity:.55}#status{color:#00e5ff;line-height:1.5;overflow-wrap:anywhere;min-height:24px}.note{margin-top:18px;color:#999;font-size:12px;line-height:1.6}
+</style></head>
+<body><main class="card">
+<h1>🥷 NinjaBox Viewer</h1>
+<p class="desc">Hedef yayın: <strong>@ninjaboxx</strong><br>Bağlantıyı test et veya tek yorum gönder.</p>
+<a class="live" href="https://www.tiktok.com/@ninjaboxx/live" target="_blank" rel="noopener noreferrer">📺 CANLI YAYINI AÇ</a>
+<label for="controlPassword">Kontrol şifresi</label><input id="controlPassword" type="password" autocomplete="current-password" placeholder="Railway VIEWER_CONTROL_PASSWORD">
+<button id="test">ÖNCE BAĞLANTIYI TEST ET</button>
+<label for="message">Gönderilecek yorum</label><textarea id="message" maxlength="150">Merhaba NinjaBox, bağlantı testi.</textarea>
+<button id="send">YORUMU GÖNDER</button>
+<p id="status" role="status">Önce bağlantı değişkenlerini kontrol et.</p>
+<p class="note">Bağlantı testi yorum göndermez. Yorum yalnızca düğmeye basıldığında gönderilir. Bu resmî olmayan bir entegrasyondur; kesintisiz çalışma garantisi yoktur. Oturum çerezlerini GitHub'a veya başkalarına gönderme.</p>
+</main>
+<script>
+const statusEl=document.getElementById("status");
+const password=()=>document.getElementById("controlPassword").value;
+async function post(path,body={}) {
+ const response=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","x-control-password":password()},body:JSON.stringify(body)});
+ const data=await response.json(); if(!response.ok) throw new Error((data.error||"İşlem başarısız")+(data.missingVariables?" Eksik: "+data.missingVariables.join(", "):"")+(data.detail?" — "+data.detail:""));
+ return data;
+}
+document.getElementById("test").addEventListener("click",async()=>{
+ if(!password()){statusEl.textContent="Kontrol şifresini gir.";return;}
+ statusEl.textContent="Bağlantı test ediliyor; yorum gönderilmeyecek...";
+ try{const d=await post("/api/test-connection");statusEl.textContent="✅ "+d.message;}
+ catch(e){statusEl.textContent="⚠️ "+e.message;}
+});
+document.getElementById("send").addEventListener("click",async()=>{
+ if(!password()){statusEl.textContent="Kontrol şifresini gir.";return;}
+ const message=document.getElementById("message").value.trim();
+ if(!message){statusEl.textContent="Yorum boş olamaz.";return;}
+ statusEl.textContent="Yorum gönderiliyor...";
+ try{const d=await post("/api/send-message",{message});statusEl.textContent="✅ "+d.message;}
+ catch(e){statusEl.textContent="⚠️ "+e.message;}
+});
 </script></body></html>
