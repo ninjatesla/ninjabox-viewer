@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NinjaBox Viewer</title>
+</head>
+<body style="background:#111;color:white;font-family:Arial;padding:25px">
+  <h1>🥷 NinjaBox Viewer</h1>
+  <p>Sunucu başarıyla çalışıyor.</p>
+  <p>Hedef yayın: @ninjaboxx</p>
+  <a href="https://www.tiktok.com/@ninjaboxx/live"
+     target="_blank"
+     style="color:#00e5ff">
+    TikTok canlı yayınını aç
+  </a>
+  <p id="status">Sunucu kontrol ediliyor...</p>
+  <script>
+    fetch('/health')
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('status').textContent =
+          d.ok ? 'Sunucu bağlantısı başarılı.' : 'Bağlantı sorunu.';
+      })
+      .catch(() => {
+        document.getElementById('status').textContent =
+          'Sunucu kontrol edilemedi.';
+      });
+  </script>
+</body>
+</html>
