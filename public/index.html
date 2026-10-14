@@ -3,29 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
   <title>NinjaBox Viewer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      padding: 24px;
+      border: 1px solid #333;
+      border-radius: 18px;
+      background: #1b1b1b;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 27px;
+    }
+
+    .description {
+      color: #bbb;
+      line-height: 1.6;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #555;
+      border-radius: 10px;
+      background: #101010;
+      color: white;
+      font-size: 17px;
+    }
+
+    button,
+    .live-button {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #00e5ff;
+      color: #111;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .live-button {
+      background: #333;
+      color: white;
+    }
+
+    #status {
+      margin-top: 20px;
+      color: #00e5ff;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      margin-top: 20px;
+      color: #999;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  </style>
 </head>
-<body style="background:#111;color:white;font-family:Arial;padding:25px">
-  <h1>🥷 NinjaBox Viewer</h1>
-  <p>Sunucu başarıyla çalışıyor.</p>
-  <p>Hedef yayın: @ninjaboxx</p>
-  <a href="https://www.tiktok.com/@ninjaboxx/live"
-     target="_blank"
-     style="color:#00e5ff">
-    TikTok canlı yayınını aç
-  </a>
-  <p id="status">Sunucu kontrol ediliyor...</p>
+
+<body>
+  <main class="card">
+
+    <h1>🥷 NinjaBox Viewer</h1>
+
+    <p class="description">
+      İzleyici kullanıcı adını gir ve NinjaBox canlı yayınını aç.
+    </p>
+
+    <form id="viewerForm">
+
+      <label for="username">
+        TikTok kullanıcı adı
+      </label>
+
+      <input
+        id="username"
+        type="text"
+        value="ninjabaris100"
+        placeholder="ninjabaris100"
+        autocomplete="username"
+        autocapitalize="none"
+        spellcheck="false"
+        maxlength="24"
+        required
+      >
+
+      <button type="submit">
+        KULLANICI ADINI KAYDET
+      </button>
+
+    </form>
+
+    <a
+      class="live-button"
+      href="https://www.tiktok.com/@ninjaboxx/live"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      📺 NINJABOXX CANLI YAYININI AÇ
+    </a>
+
+    <p id="status">
+      Kullanıcı adı hazır.
+    </p>
+
+    <p class="note">
+      Bu ekran kullanıcı adını kaydeder ve canlı yayın bağlantısını açar.
+      TikTok hesabına otomatik giriş yapmaz. Hesabınla TikTok uygulamasında
+      veya tarayıcıda oturum açmış olmalısın.
+      Şifreni ve doğrulama kodlarını bu ekrana girme.
+    </p>
+
+  </main>
+
   <script>
-    fetch('/health')
-      .then(r => r.json())
-      .then(d => {
-        document.getElementById('status').textContent =
-          d.ok ? 'Sunucu bağlantısı başarılı.' : 'Bağlantı sorunu.';
-      })
-      .catch(() => {
-        document.getElementById('status').textContent =
-          'Sunucu kontrol edilemedi.';
-      });
+    const usernameInput = document.getElementById("username");
+    const status = document.getElementById("status");
+    const form = document.getElementById("viewerForm");
+
+    try {
+      const savedUsername =
+        localStorage.getItem("ninjaboxViewerUsername");
+
+      if (savedUsername) {
+        usernameInput.value = savedUsername;
+      }
+    } catch (error) {}
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const username = usernameInput.value
+        .trim()
+        .replace(/^@/, "");
+
+      const validUsername =
+        /^[A-Za-z0-9._]{2,24}$/.test(username);
+
+      if (!validUsername) {
+        status.textContent =
+          "Lütfen geçerli bir TikTok kullanıcı adı gir.";
+        return;
+      }
+
+      usernameInput.value = username;
+
+      try {
+        localStorage.setItem(
+          "ninjaboxViewerUsername",
+          username
+        );
+      } catch (error) {}
+
+      status.textContent =
+        "@" + username + " kullanıcı adı kaydedildi.";
+    });
   </script>
+
 </body>
 </html>
