@@ -1,23 +1,27 @@
-# NinjaBox Viewer — sendMessage testi
+# NinjaBox Viewer — diagnostic + message test
 
-Bu sürüm `tiktok-live-connector` içindeki `sendMessage()` yöntemini kullanarak, kullanıcı düğmeye bastığında tek bir canlı yayın yorumu göndermeyi dener.
+## Files
+Replace these files in `ninjatesla/ninjabox-viewer`:
+- `package.json`
+- `server.js`
+- `public/index.html`
+- `README.md`
+
+Railway will redeploy after the GitHub commit if automatic deployments are enabled.
 
 ## Railway Variables
-Railway → Project → Service → Variables bölümüne ekle:
 - `TIKTOK_LIVE_USERNAME` = `ninjaboxx`
-- `TIKTOK_SESSION_ID` = yalnızca `ninjabaris100` hesabının kendi oturumundan alınan session ID
-- `TIKTOK_TARGET_IDC` = aynı hesabın `tt-target-idc` cookie değeri
-- `EULER_API_KEY` = Euler Stream hesabında oluşturulan API key
-- `VIEWER_CONTROL_PASSWORD` = güçlü, benzersiz kontrol şifresi
+- `EULER_API_KEY` = Euler Stream API key
+- `VIEWER_CONTROL_PASSWORD` = a unique password you create
+- `TIKTOK_SESSION_ID` = sessionid cookie from the sender account
+- `TIKTOK_TARGET_IDC` = tt-target-idc cookie from the same account
 
-Gizli değerleri GitHub dosyalarına, sohbet mesajlarına veya ekran görüntülerine koyma. Session ID, hesap oturumunu temsil eden hassas bir bilgidir; sızarsa oturumu kapatıp yenile.
+Never put secrets in GitHub or share screenshots showing their values. Enabling authenticated websocket sends session credentials to the third-party signing service; use only if you accept that risk.
 
-## Kurulum
-1. ZIP içindeki dosyaları mevcut `ninjatesla/ninjabox-viewer` deposundaki aynı yollarla değiştir (`package.json`, `server.js`, `public/index.html`) ve README'yi güncelle.
-2. Railway otomatik deploy ayarlıysa yeni sürüm dağıtılır.
-3. Railway Variables değerlerini ekle ve deployment'ın tamamlanmasını bekle.
-4. `/health` adresinde `messageSendingConfigured: true` görünmeli.
-5. Siteyi aç, kontrol şifresini ve test yorumunu gir, düğmeye bir kez bas.
+## Test
+1. Wait for deployment to be ACTIVE.
+2. Open `/api/diagnostics`. It reports which variable names exist but never their values.
+3. Open the site, enter `VIEWER_CONTROL_PASSWORD`, tap `ÖNCE BAĞLANTIYI TEST ET`. This does not send a message.
+4. Only if the connection test succeeds, send one short test message.
 
-## Sınırlar
-Bu TikTok'un resmî API'si değildir; TikTok/Euler değişiklikleri nedeniyle çalışmayabilir. Bağlantı ve imzalama üçüncü taraf altyapı kullanabilir. Bu sürüm kullanıcı düğmesine basınca tek yorum gönderir; otomatik yorum döngüsü, otomatik beğeni veya hediye gönderimi içermez.
+A configured variable does not prove the value is valid. This unofficial connector may stop working if TikTok or the signing service changes. This build does not send likes or gifts.
