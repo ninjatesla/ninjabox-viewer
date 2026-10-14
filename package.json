@@ -1,15 +1,9 @@
 {
   "name": "ninjabox-viewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
-  }
+  "scripts": {"start": "node server.js"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"express": "^4.21.2", "tiktok-live-connector": "^2.0.2"}
 }
